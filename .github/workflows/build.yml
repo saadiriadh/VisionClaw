@@ -6,30 +6,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Set up JDK
-        uses: actions/setup-java@v3
+      - uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v2
-      - name: Configure GitHub Packages
-        run: |
-          mkdir -p ~/.gradle
-          echo "gpr.user=saadiriadh" >> ~/.gradle/gradle.properties
-          echo "gpr.token=${{ secrets.GH_PACKAGES_TOKEN }}" >> ~/.gradle/gradle.properties
-      - name: Write API Keys
-        run: |
-          echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" >> samples/CameraAccessAndroid/local.properties
-          echo "github_token=${{ secrets.GH_PACKAGES_TOKEN }}" >> samples/CameraAccessAndroid/local.properties
-      - name: Build APK
-        working-directory: samples/CameraAccessAndroid
-        run: |
-          chmod +x gradlew
-          ./gradlew assembleDebug
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
+      - uses: android-actions/setup-android@v2
+      - run: mkdir -p ~/.gradle
+      - run: echo "gpr.user=saadiriadh" >> ~/.gradle/gradle.properties
+      - run: echo "gpr.token=${{ secrets.GH_PACKAGES_TOKEN }}" >> ~/.gradle/gradle.properties
+      - run: echo "github_token=${{ secrets.GH_PACKAGES_TOKEN }}" >> samples/CameraAccessAndroid/local.properties
+      - run: echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" >> samples/CameraAccessAndroid/local.properties
+      - run: cd samples/CameraAccessAndroid && chmod +x gradlew && ./gradlew assembleDebug
+      - uses: actions/upload-artifact@v4
         with:
           name: VisionClaw-debug
-          path: >-
-    samples/CameraAccessAndroid/app/build/outputs/apk/debug/app-debug.apk
+        path: samples/CameraAccessAndroid/app/build/outputs/apk/debug/app-debug.apk
